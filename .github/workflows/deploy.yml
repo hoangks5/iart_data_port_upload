@@ -28,6 +28,5 @@ jobs:
             ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST
-            cd /home/ubuntu/iart_data_port_upload
-            git pull
-            exit
+            pwd
+            ls -la
