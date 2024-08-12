@@ -1,0 +1,30 @@
+name: CI/CD
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    deploy:
+        name: Deploy to Iart Data Server
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout
+        - uses: actions/checkout@v2
+          env:
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            SSH_HOST: ${{ secrets.SSH_HOST }}
+            SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+
+          run: |
+            mkdir -p ~/.ssh/
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+
+            cd iart_data_port_upload
+            git pull
+            docker-compose down
+            docker-compose up -d
