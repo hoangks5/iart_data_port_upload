@@ -30,8 +30,9 @@ jobs:
             ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
+                rm -rf iart_data_port_upload
+                git clone https://github.com/hoangks5/iart_data_port_upload
                 cd iart_data_port_upload
-                ls -la
-                git pull
-                '
+                docker-compose up -d
+            '
             
