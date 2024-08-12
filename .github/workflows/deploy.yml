@@ -12,7 +12,7 @@ jobs:
 
         steps:
         - name: Checkout
-          uses: actions/checkout@v3
+          uses: actions/checkout@v2
           with:
             ssh-key: ${{ secrets.DEPLOY_KEY }}
 
@@ -29,6 +29,7 @@ jobs:
             ssh-keyscan github.com >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
+                pwd
                 rm -rf iart_data_port_upload
                 git clone git@github.com:hoangks5/iart_data_port_upload.git
                 '
