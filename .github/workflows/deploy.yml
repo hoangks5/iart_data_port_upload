@@ -21,21 +21,11 @@ jobs:
 
 
         - name: Deploy to Iart Data Server 🚀
-          env:
-            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            SSH_HOST: ${{ secrets.SSH_HOST }}
-            SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-
-          run: |
-            mkdir -p ~/.ssh/
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-
-            ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
-                rm -rf iart_data_port_upload
-                git clone https://github.com/hoangks5/iart_data_port_upload
-                cd iart_data_port_upload
-                docker-compose up -d
+          uses: JamesIves/github-pages-deploy-action@v4
+          with:
+            BASE_BRANCH: main
+            BRANCH: main
+            FOLDER: .
+            CLEAN: true
+            SSH: true
             '
-            
