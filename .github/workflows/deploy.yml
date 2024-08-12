@@ -28,4 +28,3 @@ jobs:
             FOLDER: .
             CLEAN: true
             SSH: true
-            '
