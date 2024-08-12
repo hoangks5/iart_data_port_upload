@@ -30,5 +30,6 @@ jobs:
               rm -rf iart_data_port_upload
               git clone git@github.com:hoangks5/iart_data_port_upload.git
               cd iart_data_port_upload
-              docker-compose up -d
+              docker compose build
+              docker compose up -d
             
