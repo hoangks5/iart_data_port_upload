@@ -12,5 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 80
 
 # Run the application
+RUN pip install --force-reinstall 'requests<2.29.0' 'urllib3<2.0'
+
 CMD ["python", "main.py"]
 
