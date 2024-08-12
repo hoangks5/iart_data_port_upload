@@ -17,18 +17,17 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Deploy to Iart Data Server
+          uses: uses: appleboy/ssh-action@v1.0.3
           env:
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             SSH_HOST: ${{ secrets.SSH_HOST }}
             SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
 
-          run: |
-            mkdir -p ~/.ssh/
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H github.com >> ~/.ssh/known_hosts
-
-            ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
-                git clone git@github.com:hoangks5/iart_data_port_upload.git
-                '
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USERNAME }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            script: |
+              whoami
+              ls -al
             
