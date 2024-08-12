@@ -12,7 +12,10 @@ jobs:
 
         steps:
         - name: Checkout
-        - uses: actions/checkout@v2
+          uses: actions/checkout@v2
+
+
+        - name: Deploy to Iart Data Server
           env:
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             SSH_HOST: ${{ secrets.SSH_HOST }}
