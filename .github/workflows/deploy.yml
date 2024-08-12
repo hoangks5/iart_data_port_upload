@@ -31,6 +31,7 @@ jobs:
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
                 cd iart_data_port_upload
-                git pull origin main
+                ls -la
+                git pull
                 '
             
