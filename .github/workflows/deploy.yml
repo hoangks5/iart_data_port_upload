@@ -17,7 +17,7 @@ jobs:
             token: ${{ secrets.GITHUB_TOKEN }}
 
         - name: Deploy to Iart Data Server
-          uses: uses: appleboy/ssh-action@v1.0.3
+          uses: appleboy/ssh-action@v1.0.3
           env:
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
             SSH_HOST: ${{ secrets.SSH_HOST }}
