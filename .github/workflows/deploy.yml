@@ -31,7 +31,7 @@ jobs:
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
                 rm -rf iart_data_port_upload
-                git clone https://github.com/hoangks5/iart_data_port_upload
+                git clone https://github.com/hoangks5/iart_data_port_upload.git
                 cd iart_data_port_upload
                 docker-compose up -d
             '
