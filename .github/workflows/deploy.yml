@@ -28,5 +28,4 @@ jobs:
             ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST
-            pwd
-            ls -la
+            git pull
