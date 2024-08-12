@@ -27,5 +27,7 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
-            pwd
-            ls -la
+            ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST
+            cd /home/ubuntu/iart_data_port_upload
+            git pull
+            exit
