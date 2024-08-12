@@ -13,8 +13,7 @@ jobs:
         steps:
         - name: Checkout
           uses: actions/checkout@v2
-          with:
-            ssh-key: ${{ secrets.DEPLOY_KEY }}
+
 
         - name: Deploy to Iart Data Server
           env:
@@ -24,13 +23,11 @@ jobs:
 
           run: |
             mkdir -p ~/.ssh/
-            echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-            chmod 777 ~/.ssh/id_rsa
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
-                pwd
-                rm -rf iart_data_port_upload
                 git clone git@github.com:hoangks5/iart_data_port_upload.git
                 '
             
