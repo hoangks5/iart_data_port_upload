@@ -25,7 +25,7 @@ jobs:
           run: |
             mkdir -p ~/.ssh/
             echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
+            chmod 777 ~/.ssh/id_rsa
             ssh-keyscan github.com >> ~/.ssh/known_hosts
 
             ssh -i ~/.ssh/id_rsa $SSH_USERNAME@$SSH_HOST '
