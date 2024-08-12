@@ -5,10 +5,11 @@ FROM python:3.8-slim
 WORKDIR /app
 COPY . /app
 
+RUN pip install --upgrade pip
+
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --upgrade pip
 # Expose the port
 EXPOSE 80
 
