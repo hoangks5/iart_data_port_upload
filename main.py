@@ -62,6 +62,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         encoding_str = 'utf-8'
     if type_report == 'Date Range Report':
         content = await file.read()
+        return content
         decoded_content = content.decode(encoding_str)
         csv_reader = csv.reader(io.StringIO(decoded_content))
         for _ in range(7):
