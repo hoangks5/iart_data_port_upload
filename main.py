@@ -60,9 +60,13 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         encoding_str = 'shift-jis'
     else:
         encoding_str = 'utf-8'
+    
+    print('------------------------------')
+    print(type_report)
+    print('------------------------------')
+    
     if type_report == 'Date Range Report':
         return file.filename
-        
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
         columns = list(df.columns)
