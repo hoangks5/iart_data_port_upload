@@ -61,7 +61,12 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     else:
         encoding_str = 'utf-8'
     if type_report == 'Date Range Report':
-        content = await file.read()
+        # save file to local
+        with open(f"./file process/{file.filename}", "wb") as f:
+            f.write(file.file.read())
+        print("file saved")
+        with open(f"./file process/{file.filename}", "rb") as f:
+            content = f.read()
         return content
         decoded_content = content.decode(encoding_str)
         csv_reader = csv.reader(io.StringIO(decoded_content))
