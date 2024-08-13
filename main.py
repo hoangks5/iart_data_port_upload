@@ -62,7 +62,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         df = pd.read_csv(file.file, encoding=encoding_str, skiprows=7)
         columns = list(df.columns)
     else:
-        df = pd.read_excel(file.file)
+        df = pd.read_excel(file.file, engine='openpyxl')
         columns = list(df.columns)
 
     # đếm xem có bao nhiêu phần tử trong columns năm trong schema
