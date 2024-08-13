@@ -61,18 +61,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     else:
         encoding_str = 'utf-8'
     if type_report == 'Date Range Report':
-        # save file to local
-        with open(f"./file process/{file.filename}", "wb") as f:
-            f.write(file.file.read())
-        print("file saved")
-        with open(f"./file process/{file.filename}", "rb") as f:
-            content = f.read()
-        return content
-        decoded_content = content.decode(encoding_str)
-        csv_reader = csv.reader(io.StringIO(decoded_content))
-        for _ in range(7):
-            next(csv_reader)
-        columns = next(csv_reader)
+        return file.filename
         
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
