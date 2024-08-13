@@ -55,22 +55,19 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
                 schema_ = schema[1:]
                 break
     
-    
-    if region.lower().strip() == "jp":
-        encoding_str = 'shift-jis'
-    else:
-        encoding_str = 'utf-8'
-
-    
     if type_report.lower() == 'date range report':
-        df = pd.read_csv(file.file, encoding=encoding_str, skiprows=7)
-        columns = list(df.columns)
+        try:
+            df = pd.read_csv(file.file, skiprows=7, encoding='shift-jis')
+            columns = list(df.columns)
+        except:
+            file.file.seek(0)
+            df = pd.read_csv(file.file, skiprows=7, encoding='utf-8')
+            columns = list(df.columns)
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
         columns = list(df.columns)
 
     # đếm xem có bao nhiêu phần tử trong columns năm trong schema
-    
     wrong_index = []
     count = 0
     for col in columns:
