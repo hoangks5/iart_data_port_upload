@@ -65,7 +65,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     print(type_report)
     print('------------------------------')
     
-    if type_report == 'Date Range Report':
+    if type_report.lower() == 'date range report':
         return file.filename
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
