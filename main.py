@@ -2,8 +2,9 @@ from fastapi import FastAPI, File, UploadFile
 import uvicorn
 import os
 import pandas as pd
-import io
-import csv
+from s3 import s3_client
+
+
 TYPE_REPORTS = os.listdir("schema")
 TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
 REGIONS = os.listdir('data_sample')
@@ -52,7 +53,8 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
             "status": "error",
             "message": "Không tìm thấy loại báo cáo phù hợp. Vui lòng kiểm tra lại tên file thuộc 1 trong các loại sau: " + ", ".join(TYPE_REPORTS)
             }
-    account_name = file.filename.split("-")[1].split(".")[0].strip()
+    account_name = file.filename.split("-")[1].split(".")[:-1]
+    account_name = '.'.join(account_name)
     
     result = {
         "file_name": file.filename,
@@ -93,11 +95,18 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
             wrong_index.append(col)
             
     result["correct"] = f"{count}/{len(columns)}"
-    
-    
     result["wrong_index"] = wrong_index
     result["index_file"] = columns
     result["schema"] = schema_
+    
+    # kiểm tra xem status có success hay không
+    if result['wrong_index'] == []:
+        result['status'] = 'success'
+        # chuyển sang s3 bucket
+        s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{file.filename}")
+    else:
+        result['status'] = 'error'
+    
     return result
     
 
