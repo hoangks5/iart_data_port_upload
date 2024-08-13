@@ -50,6 +50,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         schemas = schemas.split("\n")
         schemas = [schema.split(",") for schema in schemas]
         
+        schema_ = []
         for schema in schemas:
             if schema[0].lower() == region.lower().strip():
                 schema_ = schema[1:]
