@@ -2,11 +2,13 @@ from fastapi import FastAPI, File, UploadFile
 import uvicorn
 import os
 import pandas as pd
-
+import io
+import csv
 TYPE_REPORTS = os.listdir("schema")
 TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
 REGIONS = os.listdir('data_sample')
 REGIONS = [region.lower() for region in REGIONS]
+
 
 
 app = FastAPI()
@@ -53,14 +55,19 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
                 schema_ = schema[1:]
                 break
     
-   
+    
     if region.lower().strip() == "jp":
         encoding_str = 'shift-jis'
     else:
         encoding_str = 'utf-8'
     if type_report == 'Date Range Report':
-        df = pd.read_csv(file.file, encoding=encoding_str, skiprows=7)
-        columns = list(df.columns)
+        content = await file.read()
+        decoded_content = content.decode(encoding_str)
+        csv_reader = csv.reader(io.StringIO(decoded_content))
+        for _ in range(7):
+            next(csv_reader)
+        columns = next(csv_reader)
+        
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
         columns = list(df.columns)
