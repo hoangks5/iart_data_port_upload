@@ -1,0 +1,8 @@
+"Includes Amazon Marketplace, Fulfilment by Amazon (FBA) and Amazon Webstore transactions"
+"All amounts in AUD, unless specified"
+"Definitions:"
+"Sales tax collected: Includes sales tax collected from buyers for product sales, shipping and gift wrap."
+"Selling fees: Includes variable closing fees and referral fees."
+"Other transaction fees: Includes shipping chargebacks, shipping holdbacks, per-item fees and sales tax collection fees."
+"Other: Includes non-order transaction amounts. For more details, see the “Type” and “Description” columns for each order ID."
+"date/time","settlement ID","type","order ID","sku","description","quantity","marketplace","fulfilment","order city","order state","order postal","product sales","shipping credits","gift wrap credits","promotional rebates","sales tax collected","low value goods","selling fees","fulfilment by amazon fees","other transaction fees","other","total"
