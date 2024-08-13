@@ -11,7 +11,7 @@ REGIONS = [region.lower() for region in REGIONS]
 
 
 
-app = FastAPI()
+app = FastAPI(title="API Iart Data", description="API xử lý file báo cáo", version="1.0")
 
 @app.get("/health")
 def health():
@@ -23,18 +23,18 @@ def health():
 async def uploadfile(file: UploadFile = File(...), region: str = None):
     """_summary_
 
-    Args:
-        file (UploadFile, optional): Upload file báo cáo, format tên file: <loại báo cáo>-<tên tài khoản>
-        region (str, optional): Khu vực, bao gồm ['AU', 'CA', 'DE', 'ES', 'FR', 'IT', 'JP', 'MX', 'NL', 'UK', 'US']
+    Args:\n
+        file (UploadFile, optional): Upload file báo cáo, format tên file: <loại báo cáo>-<tên tài khoản>\n
+        region (str, optional): Khu vực, bao gồm ['AU', 'CA', 'DE', 'ES', 'FR', 'IT', 'JP', 'MX', 'NL', 'UK', 'US']\n
 
-    Returns:
-        file_name (str): Tên file
-        type_report (str): Loại báo cáo
-        account_name (str): Tên tài khoản
-        correct (str): Số tên cột trùng khớp với schema mẫu
-        wrong_index (list): Danh sách tên cột không trùng khớp với schema mẫu
-        index_file (list): Danh sách tên cột trong file
-        schema (list): Danh sách tên cột trong schema mẫu
+    Returns:\n
+        file_name (str): Tên file\n
+        type_report (str): Loại báo cáo\n
+        account_name (str): Tên tài khoản\n
+        correct (str): Số tên cột trùng khớp với schema mẫu\n
+        wrong_index (list): Danh sách tên cột không trùng khớp với schema mẫu\n
+        index_file (list): Danh sách tên cột trong file\n
+        schema (list): Danh sách tên cột trong schema mẫu\n
     """
     if region.lower().strip() not in REGIONS:
         return { 
