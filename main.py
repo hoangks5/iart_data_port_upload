@@ -3,7 +3,7 @@ import uvicorn
 import os
 import pandas as pd
 from s3 import s3_client
-
+import time
 
 TYPE_REPORTS = os.listdir("schema")
 TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
@@ -103,7 +103,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     if result['wrong_index'] == []:
         result['status'] = 'success'
         # chuyển sang s3 bucket
-        s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{file.filename}")
+        s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{time.time()}-{file.filename}")
     else:
         result['status'] = 'error'
     
