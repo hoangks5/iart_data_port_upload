@@ -6,3 +6,6 @@ IT,request-date,order-id,order-source,order-type,service-speed,order-status,last
 MX,request-date,order-id,order-type,order-status,last-updated-date,sku,fnsku,disposition,requested-quantity,cancelled-quantity,disposed-quantity,shipped-quantity,in-process-quantity,removal-fee,currency
 UK,request-date,order-id,order-source,order-type,service-speed,order-status,last-updated-date,sku,fnsku,disposition,requested-quantity,cancelled-quantity,disposed-quantity,shipped-quantity,in-process-quantity,removal-fee,currency
 US,request-date,order-id,order-source,order-type,order-status,last-updated-date,sku,fnsku,disposition,requested-quantity,cancelled-quantity,disposed-quantity,shipped-quantity,in-process-quantity,removal-fee,currency
+AU,
+JP,
+NL,
