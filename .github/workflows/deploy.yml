@@ -27,7 +27,7 @@ jobs:
             username: ${{ secrets.SSH_USERNAME }}
             key: ${{ secrets.SSH_PRIVATE_KEY }}
             script: |
-              rm -rf iart_data_port_upload
+              sudo rm -rf iart_data_port_upload
               git clone git@github.com:hoangks5/iart_data_port_upload.git
               cd iart_data_port_upload
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > .env
