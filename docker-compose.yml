@@ -8,10 +8,13 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    run: ["pip", "install", "-r", "requirements.txt"]
     command: ["python", "main.py"]
     networks:
       - fastapi-network
+
+    entrypoint: >
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
+             exec python main.py"
     
 
 
