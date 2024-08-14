@@ -100,7 +100,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     result["schema"] = schema_
     
     # kiểm tra xem status có success hay không
-    if result['wrong_index'] == []:
+    if result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available']:
         result['status'] = 'success'
         # chuyển sang s3 bucket
         s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{time.time()}-{file.filename}")
