@@ -1,18 +1,20 @@
 version: '3'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  api-fastapi:
+    image: python:3.11
     ports:
-      - "8000:8000"
+      - "80:80"
     volumes:
-      - .:/app
+      - ./app:/app
+    working_dir: /app
     command: ["python", "main.py"]
     networks:
       - fastapi-network
+    
+
 
 networks:
   fastapi-network:
     driver: bridge
+
