@@ -32,6 +32,5 @@ jobs:
               cd iart_data_port_upload
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > .env
               echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-              docker compose build
               docker compose up -d
             
