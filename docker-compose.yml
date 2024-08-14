@@ -10,3 +10,9 @@ services:
     volumes:
       - .:/app
     command: ["python", "main.py"]
+    networks:
+      - fastapi-network
+
+networks:
+  fastapi-network:
+    driver: bridge
