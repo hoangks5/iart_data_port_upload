@@ -1,5 +1,4 @@
 from dateutil import parser
-import locale
 
 
 
@@ -11,7 +10,6 @@ def check_data_type(df, region):
         return []
     
     if region == 'au':
-        locale.setlocale(locale.LC_ALL, 'en_AU.UTF-8')
         for index, date in enumerate(date_time_dict['date/time']):
             try:
                 parser.parse(date)
@@ -21,11 +19,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace(',',''))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'ca':
-        locale.setlocale(locale.LC_ALL, 'en_CA.UTF-8')
         for index, date in enumerate(date_time_dict['date/time']):
             try:
                 parser.parse(date)
@@ -35,11 +32,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace(',',''))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'de':
-        locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
         for index, date in enumerate(date_time_dict['Datum/Uhrzeit']):
             try:
                 parser.parse(date)
@@ -49,11 +45,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'es':
-        locale.setlocale(locale.LC_ALL, 'es_ES.UTF-8')
         for index, date in enumerate(date_time_dict['fecha y hora']):
             try:
                 moth_translate = {
@@ -79,11 +74,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'fr':
-        locale.setlocale(locale.LC_ALL, 'fr_FR.UTF-8')
         for index, date in enumerate(date_time_dict['date/heure']):
             try:
                 moth_translate = {
@@ -109,11 +103,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'it':
-        locale.setlocale(locale.LC_ALL, 'it_IT.UTF-8')
         for index, date in enumerate(date_time_dict['Data/Ora:']):
             try:
                 moth_translate = {
@@ -139,11 +132,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'jp':
-        locale.setlocale(locale.LC_ALL, 'ja_JP.UTF-8')
         for index, date in enumerate(date_time_dict['日付/時間']):
             try:
                 parser.parse(date)
@@ -153,11 +145,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace(',',''))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'mx':
-        locale.setlocale(locale.LC_ALL, 'es_MX.UTF-8')
         for index, date in enumerate(date_time_dict['fecha/hora']):
             try:
                 moth_translate = {
@@ -183,11 +174,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'nl':
-        locale.setlocale(locale.LC_ALL, 'nl_NL.UTF-8')
         for index, date in enumerate(date_time_dict['datum/tijd']):
             try:
                 parser.parse(date)
@@ -197,11 +187,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'uk':
-        locale.setlocale(locale.LC_ALL, 'en_GB.UTF-8')
         for index, date in enumerate(date_time_dict['date/time']):
             try:
                 parser.parse(date)
@@ -211,11 +200,10 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace(',',''))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'us':
-        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
         for index, date in enumerate(date_time_dict['date/time']):
             try:
                 parser.parse(date)
@@ -225,7 +213,7 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    locale.atof(str(value))
+                    float(str(value).replace('.','').replace(',','.'))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
                     

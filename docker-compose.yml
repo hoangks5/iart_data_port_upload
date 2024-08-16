@@ -9,14 +9,9 @@ services:
     command: ["python", "main.py"]
     networks:
       - fastapi-network
-    environment:
-      - LANG=en_US.UTF-8
-      - LC_ALL=en_US.UTF-8
+
     entrypoint: >
-      sh -c "apt-get update && apt-get install -y locales && 
-             locale-gen en_US.UTF-8 en_AU.UTF-8 en_CA.UTF-8 de_DE.UTF-8 es_ES.UTF-8 fr_FR.UTF-8 it_IT.UTF-8 ja_JP.UTF-8 nl_NL.UTF-8 en_GB.UTF-8 && 
-             dpkg-reconfigure --frontend=noninteractive locales &&
-             pip install --no-cache-dir -r requirements.txt &&
+      sh -c "pip install --no-cache-dir -r requirements.txt &&
              exec python main.py"
 
 networks:
