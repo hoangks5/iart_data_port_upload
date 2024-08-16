@@ -4,6 +4,11 @@ import os
 import pandas as pd
 from s3 import s3_client
 import time
+from dateutil import parser
+from src.check_data_type import check_data_type
+
+
+
 
 TYPE_REPORTS = os.listdir("schema")
 TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
@@ -47,6 +52,13 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
     for report in TYPE_REPORTS:
         if report.lower() in file.filename.lower():
             type_report = report
+            if type_report == 'date range report':
+                # kiểm tra xem file có phải là .csv hay không nếu không phải thì trả về lỗi
+                if file.filename.split(".")[-1] != 'csv':
+                    return {
+                        "status": "error",
+                        "message": "Loại báo cáo Date Range Report phải là file .csv"
+                    }
             break
     if type_report is None:
         return {
@@ -94,14 +106,35 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         else:
             wrong_index.append(col)
             
-    result["correct"] = f"{count}/{len(columns)}"
+    result["correct_index"] = f"{count}/{len(columns)}"
     result["wrong_index"] = wrong_index
     result["index_file"] = columns
     result["schema"] = schema_
-    
+    result["wrong_data_type"] = []
     # kiểm tra xem status có success hay không
     if result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available']:
         result['status'] = 'success'
+        # kiểm tra data type của file
+        
+        result['wrong_data_type'] = check_data_type(df, region.lower().strip())
+        if result['wrong_data_type'] == []:
+            result['status'] = 'success'
+        else:
+            result['status'] = 'error'
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         # chuyển sang s3 bucket
         s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{time.time()}-{file.filename}")
     else:

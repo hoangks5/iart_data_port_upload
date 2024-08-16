@@ -1,10 +1,10 @@
-﻿"Includes Amazon Marketplace, Fulfillment by Amazon (FBA), and Amazon Webstore transactions"
-"All amounts in USD, unless specified"
-"Definitions:"
-"Sales tax collected: Includes sales tax collected from buyers for product sales, shipping, and gift wrap."
-"Selling fees: Includes variable closing fees and referral fees."
-"Other transaction fees: Includes shipping chargebacks, shipping holdbacks, per-item fees  and sales tax collection fees."
-"Other: Includes non-order transaction amounts. For more details, see the ""Type"" and ""Description"" columns for each order ID."
-"date/time","settlement id","type","order id","sku","description","quantity","marketplace","account type","fulfillment","order city","order state","order postal","tax collection model","product sales","product sales tax","shipping credits","shipping credits tax","gift wrap credits","giftwrap credits tax","Regulatory Fee","Tax On Regulatory Fee","promotional rebates","promotional rebates tax","marketplace withheld tax","selling fees","fba fees","other transaction fees","other","total"
-"May 18, 2024 11:46:25 AM PDT","19868397481","Liquidations","9910081761551","X003QF3ZOF","WolVol Shooting Game Toy - Foam Ball Popper Air Guns 2 Splatter Gun with 24 Blast Poppers Target for 6 7 8 9 10+ Years Old Boys & Girls Compatible Nerf","1","","Standard Orders","","","","","","0.62","0","0","0","0","0","0","0","0","0","0","0","0","-0.69","0","-0.07"
-"May 18, 2024 11:53:59 AM PDT","19868397481","Liquidations","9910081760551","X003QF3ZOF","WolVol Shooting Game Toy - Foam Ball Popper Air Guns 2 Splatter Gun with 24 Blast Poppers Target for 6 7 8 9 10+ Years Old Boys & Girls Compatible Nerf","1","","Standard Orders","","","","","","0.62","0","0","0","0","0","0","0","0","0","0","0","0","-0.69","0","-0.07"
+﻿"Includes Amazon Marketplace, Fulfillment by Amazon (FBA), and Amazon Webstore transactions",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"All amounts in USD, unless specified",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Definitions:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Sales tax collected: Includes sales tax collected from buyers for product sales, shipping, and gift wrap.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Selling fees: Includes variable closing fees and referral fees.,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Other transaction fees: Includes shipping chargebacks, shipping holdbacks, per-item fees  and sales tax collection fees.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Other: Includes non-order transaction amounts. For more details, see the ""Type"" and ""Description"" columns for each order ID.",,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+date/time,settlement id,type,order id,sku,description,quantity,marketplace,account type,fulfillment,order city,order state,order postal,tax collection model,product sales,product sales tax,shipping credits,shipping credits tax,gift wrap credits,giftwrap credits tax,Regulatory Fee,Tax On Regulatory Fee,promotional rebates,promotional rebates tax,marketplace withheld tax,selling fees,fba fees,other transaction fees,other,total
+"May 18, 2024 11:46:25 AM PDT",19868397481,Liquidations,9.91008E+12,X003QF3ZOF,WolVol Shooting Game Toy - Foam Ball Popper Air Guns 2 Splatter Gun with 24 Blast Poppers Target for 6 7 8 9 10+ Years Old Boys & Girls Compatible Nerf,1,,Standard Orders,,,,,,0.62,0,0,0,0,0,0,0,0,0,0,0,0,-0.69,0,-0.07
+"May 18, 2024 11:53:59 AM PDT",19868397481,Liquidations,9.91008E+12,X003QF3ZOF,WolVol Shooting Game Toy - Foam Ball Popper Air Guns 2 Splatter Gun with 24 Blast Poppers Target for 6 7 8 9 10+ Years Old Boys & Girls Compatible Nerf,1,,Standard Orders,,,,,,0.62,0,0,0,0,0,0,0,0,0,0,0,0,-0.69,0,-0.07
