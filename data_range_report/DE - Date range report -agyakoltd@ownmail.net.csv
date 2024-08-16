@@ -1,0 +1,12 @@
+﻿"Einschließlich Transaktionen zu Amazon Marketplace, Versand durch Amazon und Amazon Webstore",,,,,,,,,,,,,,,,,,,,,,,,,,
+Alle Beträge in Euro sofern nicht anders gekennzeichnet,,,,,,,,,,,,,,,,,,,,,,,,,,
+Definitionen:,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Eingezogene Umsatzsteuer: Einschließlich von Käufern eingezogene Umsatzsteuer für Produktverkäufe, Versand und Geschenkverpackung.",,,,,,,,,,,,,,,,,,,,,,,,,,
+Verkaufsgebühren: Beinhaltet variable Abschlussgebühren und Werbekostenerstattungen.,,,,,,,,,,,,,,,,,,,,,,,,,,
+Andere Transaktionsgebühren: Einschließlich Ausgleichsbuchungen für Versand und Versandgebühren.,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Andere: Enthält Beträge zu Transaktionen, die nicht auf eine Bestellung bezogen sind. Weitere Details finden Sie zu jeder Bestellung in den Spalten ""Typ"" und ""Beschreibung"".",,,,,,,,,,,,,,,,,,,,,,,,,,
+Datum/Uhrzeit,Abrechnungsnummer,Typ,Bestellnummer,SKU,Beschreibung,Menge,Marketplace,Versand,Ort der Bestellung,Bundesland,Postleitzahl,Steuererhebungsmodell,Umsätze,Produktumsatzsteuer,Gutschrift für Versandkosten,Steuer auf Versandgutschrift,Gutschrift für Geschenkverpackung,Steuer auf Geschenkverpackungsgutschriften,Rabatte aus Werbeaktionen,Steuer auf Aktionsrabatte,Einbehaltene Steuer auf Marketplace,Verkaufsgebühren,Gebühren zu Versand durch Amazon,Andere Transaktionsgebühren,Andere,Gesamt
+07.04.2023 13:49:06 UTC,19542737062,Versand durch Amazon Lagergebühr,,,Versand durch Amazon Lagergebühr,,Amazon.de,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"-1,57","-1,57"
+21.04.2023 09:40:51 UTCf,19630068272,Versand durch Amazon Lagergebühr,,,Versand durch Amazon Langzeitlagergebühr,,Amazon.de,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"-1,24","-1,24"
+21.04.2023 20:53:12 UTC,19630068272,Versand durch Amazon Lagergebühr,148348978,,Versand durch Amazon Gebühr für Rücksendung,,Amazon.de,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"-0,65","-0,65"
+24.04.2023 08:54:10 UTC,19630068272,Versand durch Amazon Lagergebühr,148570477,,Versand durch Amazon Gebühr für Rücksendung,,Amazon.de,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"-1,00","-1,00"

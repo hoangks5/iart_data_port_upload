@@ -1,0 +1,17 @@
+﻿"Incluye transacciones del Marketplace de Amazon, Logística de Amazon y Amazon Webstore",,,,,,,,,,,,,,,,,,,,,,,,,,
+"Todos los importes en EUR, a menos que se especifique lo contrario",,,,,,,,,,,,,,,,,,,,,,,,,,
+Definiciones:,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Recaudación de impuestos sobre ventas: incluye los impuestos sobre ventas recaudados al comprador respecto al producto, el envío y el envoltorio para regalo.",,,,,,,,,,,,,,,,,,,,,,,,,,
+Tarifas por venta: incluyen tarifas variables por cierre de venta y tarifas por referencia.,,,,,,,,,,,,,,,,,,,,,,,,,,
+"Tarifas de otras transacciones: incluye reintegros de los cargos por envío, retenciones de envío y tarifas de impuestos sobre ventas.",,,,,,,,,,,,,,,,,,,,,,,,,,
+"Otro: incluye importes de transacciones distintas del pedido. Para mas información, consulta las columnas ""Tipo"" y ""Descripción"" de cada número de pedido.",,,,,,,,,,,,,,,,,,,,,,,,,,
+fecha y hora,identificador de pago,tipo,número de pedido,sku,descripción,cantidad,web de Amazon,gestión logística,ciudad de procedencia del pedido,comunidad autónoma de procedencia del pedido,código postal de procedencia del pedido,Formulario de recaudación de impuestos,ventas de productos,impuesto de ventas de productos,abonos de envío,impuestos por abonos de envío,abonos de envoltorio para regalo,giftwrap credits tax,devoluciones promocionales,promotional rebates tax,impuesto retenido en el sitio web,tarifas de venta,tarifas de Logística de Amazon,tarifas de otras transacciones,otro,total
+7 ene 2023 10:48:05 UTC,18874631622,Tarifas de inventario de Logística de Amazon,,,Tarifa de almacenamiento de Logística de Amazon,,Amazon.es,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"-0,12","-0,12"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.17520948342,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,03","0,03"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.18294310822,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,07","0,07"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.18458728272,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,09","0,09"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.17934990922,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,07","0,07"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.18874631622,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,12","0,12"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.17764052162,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,07","0,07"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.18126255982,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,07","0,07"
+16 ene 2023 11:34:33 UTC,19045026692,Saldo descubierto,,,amzn1.cam.v1.sgid.18624724872,,,,,,,,0,0,0,0,0,0,0,0,0,0,0,0,"0,14","0,14"

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Form
 import uvicorn
 import os
 import pandas as pd
@@ -26,12 +26,11 @@ def health():
 
 # api endpoint post method to send the file data excel
 @app.post("/uploadfile/")
-async def uploadfile(file: UploadFile = File(...), team: str = None, platform: str = None):
+async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), platform: str = Form('AWZ')):
     """_summary_
 
     Args:\n
         file (UploadFile, optional): Upload file báo cáo, format tên file: <Thị trường>-<loại báo cáo>-<tên tài khoản>\n
-        region (str, optional): Khu vực, bao gồm ['AU', 'CA', 'DE', 'ES', 'FR', 'IT', 'JP', 'MX', 'NL', 'UK', 'US']\n
 
     Returns:\n
         file_name (str): Tên file\n
@@ -42,11 +41,12 @@ async def uploadfile(file: UploadFile = File(...), team: str = None, platform: s
         index_file (list): Danh sách tên cột trong file\n
         schema (list): Danh sách tên cột trong schema mẫu\n
     """
-    region = file.filename.split("-")[0]
+    region = file.filename.split("-")[0].strip().lower()
+    
     if region.lower().strip() not in REGIONS:
         return { 
             "status": "error",
-            "message": "Vùng không hợp lệ. Vui lòng kiểm tra lại vùng miền thuộc 1 trong các vùng sau: " + ", ".join(REGIONS).upper()
+            "message": "Vùng không hợp lệ. Vui lòng kiểm tra lại tên file phải có thị trường thuộc 1 trong các vùng sau: " + ", ".join(REGIONS).upper() + ". Tên file phải có định dạng: <Thị trường>-<loại báo cáo>-<tên tài khoản>"
             }
     
     type_report = None
@@ -66,10 +66,14 @@ async def uploadfile(file: UploadFile = File(...), team: str = None, platform: s
             "status": "error",
             "message": "Không tìm thấy loại báo cáo phù hợp. Vui lòng kiểm tra lại tên file thuộc 1 trong các loại sau: " + ", ".join(TYPE_REPORTS)
             }
-    account_name = file.filename.split("-")[1].split(".")[:-1]
-    account_name = '.'.join(account_name)
+    account_name = file.filename.split("-")[-1].split(".")[:-1]
+    account_name = '.'.join(account_name).strip().lower()
+
+    
+    
     
     result = {
+        "region": region,
         "file_name": file.filename,
         "type_report": type_report,
         "account_name": account_name
@@ -137,7 +141,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = None, platform: s
         
         
         # chuyển sang s3 bucket
-        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{file.filename}")
+        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()}-{file.filename}")
     else:
         result['status'] = 'error'
     
