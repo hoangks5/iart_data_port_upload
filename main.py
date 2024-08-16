@@ -5,6 +5,11 @@ import pandas as pd
 from s3 import s3_client
 import time
 from dateutil import parser
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+
+
 from src.check_data_type import check_data_type
 
 
@@ -15,9 +20,27 @@ TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
 REGIONS = os.listdir('data_sample')
 REGIONS = [region.lower() for region in REGIONS]
 
+class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, max_size):
+        super().__init__(app)
+        self.max_size = max_size
+
+    async def dispatch(self, request: Request, call_next):
+        if request.method == "POST" and request.headers.get("content-type") and "multipart/form-data" in request.headers.get("content-type"):
+            content_length = request.headers.get("content-length")
+            if content_length and int(content_length) > self.max_size:
+                response = JSONResponse(
+                    content={"status": "error", "message": "File upload quá lớn. Chỉ cho phép file nhỏ hơn 25MB"},
+                    status_code=200
+                )
+                return response
+        response = await call_next(request)
+        return response
+
 
 
 app = FastAPI(title="API Iart Data", description="API xử lý file báo cáo", version="1.0")
+app.add_middleware(LimitUploadSizeMiddleware, max_size=25 * 1024 * 1024)  # 25MB
 
 @app.get("/health")
 def health():
@@ -41,8 +64,21 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         index_file (list): Danh sách tên cột trong file\n
         schema (list): Danh sách tên cột trong schema mẫu\n
     """
-    region = file.filename.split("-")[0].strip().lower()
+    # kiểm tra chỉ chấp nhận file có đuôi .csv hoặc .xlsx
+    if file.filename.split(".")[-1] not in ['csv', 'xlsx']:
+        return {
+            "status": "error",
+            "message": "Chỉ chấp nhận file có đuôi .csv hoặc .xlsx"
+        }
+    # kiểm tra chỉ cho upload file nhỏ hơn 25MB
+    if file.file.__sizeof__() > 25000000:
+        return {
+            "status": "error",
+            "message": "File upload quá lớn. Chỉ cho phép file nhỏ hơn 25MB"
+        }
     
+    
+    region = file.filename.split("-")[0].strip().lower()
     if region.lower().strip() not in REGIONS:
         return { 
             "status": "error",
@@ -141,7 +177,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         
         
         # chuyển sang s3 bucket
-        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()}-{file.filename}")
+        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
     else:
         result['status'] = 'error'
     
