@@ -26,11 +26,11 @@ def health():
 
 # api endpoint post method to send the file data excel
 @app.post("/uploadfile/")
-async def uploadfile(file: UploadFile = File(...), region: str = None):
+async def uploadfile(file: UploadFile = File(...), team: str = None, platform: str = None):
     """_summary_
 
     Args:\n
-        file (UploadFile, optional): Upload file báo cáo, format tên file: <loại báo cáo>-<tên tài khoản>\n
+        file (UploadFile, optional): Upload file báo cáo, format tên file: <Thị trường>-<loại báo cáo>-<tên tài khoản>\n
         region (str, optional): Khu vực, bao gồm ['AU', 'CA', 'DE', 'ES', 'FR', 'IT', 'JP', 'MX', 'NL', 'UK', 'US']\n
 
     Returns:\n
@@ -42,6 +42,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         index_file (list): Danh sách tên cột trong file\n
         schema (list): Danh sách tên cột trong schema mẫu\n
     """
+    region = file.filename.split("-")[0]
     if region.lower().strip() not in REGIONS:
         return { 
             "status": "error",
@@ -136,7 +137,7 @@ async def uploadfile(file: UploadFile = File(...), region: str = None):
         
         
         # chuyển sang s3 bucket
-        s3_client.upload_fileobj(file.file, "iart-data", f"AMZ/{region.lower()}/{account_name}/{time.time()}-{file.filename}")
+        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{file.filename}")
     else:
         result['status'] = 'error'
     
