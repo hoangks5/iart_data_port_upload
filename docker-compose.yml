@@ -11,7 +11,7 @@ services:
       - fastapi-network
 
     entrypoint: >
-      sh -c "pip install --no-cache-dir -r requirements.txt &&
+      sh -c "pip install --no-cache-dir -r requirements.txt && export LC_ALL=C &&
              exec python main.py"
 
 networks:
