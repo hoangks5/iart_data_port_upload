@@ -174,7 +174,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
 
 
     if result['status'] == 'success':
-        df.to_csv('./archive/' + file.filename, index=False)
+        df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
         # chuyển sang s3 bucket
         s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
     else:
