@@ -8,7 +8,7 @@ from dateutil import parser
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
-
+import io
 
 from src.check_data_type import check_data_type
 
@@ -172,20 +172,11 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
     
 
 
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+    if result['status'] == 'success':
+        df.to_csv('./archive/' + file.filename, index=False)
         # chuyển sang s3 bucket
-        s3_client.upload_fileobj(file.file, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
+        s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
     else:
         result['status'] = 'error'
     
