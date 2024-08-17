@@ -146,22 +146,30 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             count += 1
         else:
             wrong_index.append(col)
+    
+    # kiểm tra xem có bao nhiêu cột thiếu
+    missing_index = []
+    for schema in schema_:
+        if schema not in columns:
+            missing_index.append(schema)
+            
+    
             
     result["correct_index"] = f"{count}/{len(columns)}"
     result["wrong_index"] = wrong_index
+    result["missing_index"] = missing_index
     result["index_file"] = columns
     result["schema"] = schema_
     result["wrong_data_type"] = []
     # kiểm tra xem status có success hay không
-    if result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available']:
-        result['status'] = 'success'
+    if ( result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available'] ) and result['missing_index'] == []:
         # kiểm tra data type của file
-        
         result['wrong_data_type'] = check_data_type(df, region.lower().strip())
         if result['wrong_data_type'] == []:
             result['status'] = 'success'
         else:
             result['status'] = 'error'
+    
 
 
         
