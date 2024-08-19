@@ -32,10 +32,7 @@ jobs:
               cd iart_data_port_upload
               echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" > .env
               echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-              echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
-              echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> .env
-              echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
-              echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+              echo "MONGO_URI=${{ secrets.MONGO_URI }}" >> .env
               
               docker compose down --volumes
               docker compose up -d
