@@ -12,7 +12,22 @@ import io
 
 from src.check_data_type import check_data_type
 
+import mysql.connector
 
+from dotenv import load_dotenv
+import os
+load_dotenv()
+from sqlalchemy import create_engine
+
+def connect_db():
+    config = {
+        'user': os.getenv('MYSQL_USER'),
+        'password': os.getenv('MYSQL_PASSWORD'),
+        'host': os.getenv('MYSQL_HOST'),
+        'database': os.getenv('MYSQL_DATABASE')
+    }
+    engine = create_engine(f"mysql+mysqlconnector://{config['user']}:{config['password']}@{config['host']}/{config['database']}")
+    return engine.connect()
 
 
 TYPE_REPORTS = os.listdir("schema")
@@ -37,7 +52,7 @@ class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
         response = await call_next(request)
         return response
 
-
+engine = connect_db()
 
 app = FastAPI(title="API Iart Data", description="API xử lý file báo cáo", version="1.0")
 app.add_middleware(LimitUploadSizeMiddleware, max_size=25 * 1024 * 1024)  # 25MB
@@ -172,7 +187,6 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
     
 
 
-
     if result['status'] == 'success':
         df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
         # chuyển sang s3 bucket
@@ -180,7 +194,15 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
     else:
         result['status'] = 'error'
     
+    # load df vào sql database
+    
+    
+    df.to_sql(name=f'{platform}_{region}_{type_report}', con=engine , if_exists='append', index=False)
+    
+    
     return result
+
+
     
 
 if __name__ == "__main__":
