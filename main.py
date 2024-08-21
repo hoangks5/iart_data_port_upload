@@ -8,9 +8,19 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from src.check_data_type import check_data_type
+from sqlalchemy import text
+import mysql.connector
+from dotenv import load_dotenv
+load_dotenv()
 
+from sqlalchemy import create_engine
 
-
+conn = mysql.connector.connect(
+    host=os.getenv('MYSQL_HOST'),
+    user=os.getenv('MYSQL_USER'),
+    password=os.getenv('MYSQL_PASSWORD'),
+    database=os.getenv('MYSQL_DATABASE')
+)
 
 
 
@@ -177,6 +187,43 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
         # chuyển sang s3 bucket
         s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
+        # chỉ lấy cột thứ 4, 5
+        df = df.iloc[:, 3:5]
+        df.columns = ['order_id', 'sku']
+        df['account'] = account_name
+        
+        # đổi thứ tự cột
+        df = df[['account', 'order_id', 'sku']]
+        df.dropna(inplace=True)
+        list_order_id = df['order_id'].tolist()
+        list_sku = df['sku'].tolist()
+        
+        
+        cursor = conn.cursor()
+            
+        query = """
+        SELECT account FROM amz_report WHERE order_id IN ({}) AND sku IN ({})
+        """.format(','.join(['%s']*len(list_order_id)), ','.join(['%s']*len(list_sku)))
+        cursor.execute(query, list_order_id + list_sku)
+        result_query = cursor.fetchall()
+            
+        if result_query:
+            account_ = result_query[0][0]
+            if account_ != account_name:
+                return {
+                    "status": "error",
+                    "message": f"Dữ liệu upload bị trùng lặp order id hoặc sku với tài khoản {account_}"
+                }
+
+        insert_query = """
+INSERT IGNORE INTO amz_report (account, order_id, sku)
+VALUES (%s, %s, %s)
+"""
+        data = df.values.tolist()
+        cursor.executemany(insert_query, data)
+        conn.commit()
+        cursor.close()
+        result['message'] = 'Upload file thành công'
     else:
         result['status'] = 'error'
     
