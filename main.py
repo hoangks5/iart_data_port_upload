@@ -9,6 +9,10 @@ import re
 import mysql.connector
 from dotenv import load_dotenv
 load_dotenv()
+import requests
+
+
+ACCESS_TOKEN_ONELAKE = os.getenv('ACCESS_TOKEN_ONELAKE')
 
 
 def get_conn():
@@ -46,6 +50,36 @@ def extract_emails(string):
     
     return result
 
+def patch_file(url, file_path, file_name):
+    
+    token_url = url + "?resource=file"
+    token_headers={
+        "Authorization" : "Bearer " + ACCESS_TOKEN_ONELAKE,
+        "x-ms-file-name": file_name,
+    }
+    print("creating file in lake")
+    # Code to create file in lakehouse
+    response = requests.put(token_url, data={}, headers=token_headers)
+    print(response)
+    
+    
+    token_url = url + "?position=0&action=append&flush=true"
+    token_headers={
+        "Authorization" : "Bearer " + ACCESS_TOKEN_ONELAKE,
+        "x-ms-file-name": 'item.csv',
+        "content-length" : "0"
+    }
+    print("pushing data to file in lake")
+
+    #Code to push Data to Lakehouse 
+    with open(file_path, 'rb') as file:
+        file_contents = file.read()
+        response = requests.patch(token_url, data=file_contents, headers=token_headers)
+        
+    print(response.text)
+    return response
+
+
 
 
 TYPE_REPORTS = os.listdir("schema")
@@ -68,7 +102,7 @@ def health():
 
 # api endpoint post method to send the file data excel
 @app.post("/uploadfile/")
-async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), platform: str = Form('AWZ')):
+async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), platform: str = Form('amazon')):
     """_summary_
 
     Args:\n
@@ -272,8 +306,9 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             conn.close()
     
         df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
-        # chuyển sang s3 bucket
-        s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
+      
+      
+        patch_file(f"https://onelake.dfs.fabric.microsoft.com/b8fa8dd8-6181-4d0a-a756-1cc3d08f1244/de223b30-d0a3-469c-94d6-cf7137fcae33/Files/iart/{team}/{platform}/{account_name}/{region}/{file.filename}", './archive/' + file.filename, file.filename)
         os.remove('./archive/' + file.filename)
         return result
             
