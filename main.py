@@ -129,6 +129,8 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), plat
         schema (list): Danh sách tên cột trong schema mẫu\n
     """
     # kiểm tra chỉ chấp nhận file có đuôi .csv hoặc .xlsx
+    file.filename = file.filename.lower()
+    
     if file.filename.split(".")[-1] not in ['csv', 'xlsx']:
         return {
             "status": "error",
