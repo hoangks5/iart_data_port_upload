@@ -70,11 +70,11 @@ class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
                 return response
         response = await call_next(request)
         return response
-
-
-
+    
 app = FastAPI(title="API Iart Data", description="API xử lý file báo cáo", version="1.0")
 app.add_middleware(LimitUploadSizeMiddleware, max_size=25 * 1024 * 1024)  # 25MB
+
+
 
 @app.get("/health")
 def health():
@@ -110,8 +110,8 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             "status": "error",
             "message": "File upload quá lớn. Chỉ cho phép file nhỏ hơn 25MB"
         }
-    
-    
+
+    # kiêm tra xem tên file có đúng định dạng không
     region = file.filename.split("-")[0].strip().lower()
     if region.lower().strip() not in REGIONS:
         return { 
@@ -136,14 +136,13 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             "status": "error",
             "message": "Không tìm thấy loại báo cáo phù hợp. Vui lòng kiểm tra lại tên file thuộc 1 trong các loại sau: " + ", ".join(TYPE_REPORTS)
             }
-        
+    # kiểm tra xem tên tài khoản có trong tên file không
     account_name = extract_emails(file.filename)
     if len(account_name) == 0:
         return {
             "status": "error",
             "message": "Không tìm thấy tên tài khoản trong tên file. Vui lòng kiểm tra lại tên file phải có định dạng: <Thị trường>-<loại báo cáo>-<tên tài khoản>"
         }
-        
     elif len(account_name) == 1:
         account_name = account_name[0]
     else:
@@ -153,20 +152,17 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         }
 
     
-    
-    
     result = {
         "region": region,
         "file_name": file.filename,
         "type_report": type_report,
         "account_name": account_name
     }
-    
+    # kiểm tra xem file có đúng schema không
     with open(f"./schema/{type_report}.csv", "r", encoding="utf-8") as f:
         schemas = f.read()
         schemas = schemas.split("\n")
         schemas = [schema.split(",") for schema in schemas]
-        
         schema_ = []
         for schema in schemas:
             if schema[0].lower() == region.lower().strip():
@@ -183,9 +179,11 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             columns = list(df.columns)
         
         if region.lower().strip() == 'us' and 'account type' not in columns:
-            # thêm cột account type vào dataframe với giá trị trống
+            # thêm cột account type vào dataframe cuối cùng
             df['account type'] = ''
             columns = list(df.columns)
+            
+            print(columns)
             
             
         # đếm xem có bao nhiêu phần tử trong columns năm trong schema
@@ -203,8 +201,6 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             if schema not in columns:
                 missing_index.append(schema)
 
-        
-        
                 
         result["correct_index"] = f"{count}/{len(columns)}"
         result["wrong_index"] = wrong_index
@@ -214,8 +210,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         result["wrong_data_type"] = []
         result["status"] = 'error'
         
-        
-        # kiểm tra xem status có success hay không
+        # kiểm tra wrong_index và missing_index nếu cả 2 đều rỗng thì mới kiểm tra data type
         if ( result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available'] ) and result['missing_index'] == []:
             # kiểm tra data type của file
             result['wrong_data_type'] = check_data_type(df, region.lower().strip())
@@ -223,42 +218,54 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
                 result['status'] = 'success'
             else:
                 result['status'] = 'error'
+                str_wrong_data_type = ''
+                for wrong_data_type in result['wrong_data_type']:
+                    s = f"Cột {wrong_data_type['column']} hàng {wrong_data_type['row']} có giá trị {wrong_data_type['value']} không đúng định dạng\n"
+                    str_wrong_data_type += s
+                result['message'] = 'Dữ liệu trong file không đúng định dạng\n' + str_wrong_data_type
+                return result
+        else:
+            result['status'] = 'error'
+            result['message'] = f'File đang chứa {len(result["wrong_index"])} cột không trùng khớp: {", ".join(result["wrong_index"])} và thiếu {len(result["missing_index"])} cột: {", ".join(result["missing_index"])}'
+            return result
+            
+
         
-
-
-        if result['status'] == 'success':
-            df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
-            # chuyển sang s3 bucket
-            s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
-            # chỉ lấy cột thứ 4, 5
-            df = df.iloc[:, 3:5]
-            df.columns = ['order_id', 'sku']
-            df['account'] = account_name
+        # chỉ lấy cột thứ 4, 5
+        df = df.iloc[:, 3:5]
+        df.columns = ['order_id', 'sku']
+        df['account'] = account_name
+        
+        # đổi thứ tự cột
+        df = df[['account', 'order_id', 'sku']]
+        df.dropna(inplace=True)
+        list_order_id = df['order_id'].tolist()
+        list_sku = df['sku'].tolist()
+        
+        
+        conn = get_conn()
+        if conn is None:
+            return {
+                "status": "error",
+                "message": "Không thể kết nối với database"
+            }
+        cursor = conn.cursor()
+        
             
-            # đổi thứ tự cột
-            df = df[['account', 'order_id', 'sku']]
-            df.dropna(inplace=True)
-            list_order_id = df['order_id'].tolist()
-            list_sku = df['sku'].tolist()
+        if len(list_order_id) == 0 or len(list_sku) == 0:
+            # đấy là case file không có dữ liệu
+            result['status'] = 'success'
+            result['message'] = 'Upload file thành công'
             
-            
-            conn = get_conn()
-            if conn is None:
-                return {
-                    "status": "error",
-                    "message": "Không thể kết nối với database"
-                }
-            cursor = conn.cursor()
-            
-                
+        else:
             query = """
             SELECT account FROM amz_report WHERE order_id IN ({}) AND sku IN ({})
             """.format(','.join(['%s']*len(list_order_id)), ','.join(['%s']*len(list_sku)))
+            
             cursor.execute(query, list_order_id + list_sku)
             result_query = cursor.fetchall()
         
-        
-                
+
             if result_query:
                 account_ = result_query[0][0]
                 if account_ != account_name:
@@ -276,19 +283,29 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             conn.commit()
             cursor.close()
             result['message'] = 'Upload file thành công'
-        else:
-            result['status'] = 'error'
-        
-        
-        
-        
+            conn.close()
+    
+    
+            
+            
+
+        df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
+        # chuyển sang s3 bucket
+        s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
+        os.remove('./archive/' + file.filename)
+    
+    
         return result
             
             
             
     else:
-        df = pd.read_excel(file.file, engine='openpyxl')
-        columns = list(df.columns)
+        return {
+            "status": "error",
+            "message": "Hiện tại chỉ hỗ trợ loại báo cáo Date Range Report. Các loại báo cáo khác sẽ được hỗ trợ trong tương lai"
+        }
+        #df = pd.read_excel(file.file, engine='openpyxl')
+        #columns = list(df.columns)
 
     
 
