@@ -271,19 +271,11 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             result['message'] = 'Upload file thành công'
             conn.close()
     
-    
-            
-            
-
         df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
         # chuyển sang s3 bucket
         s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
         os.remove('./archive/' + file.filename)
-    
-    
         return result
-            
-            
             
     else:
         return {
@@ -292,9 +284,6 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         }
         #df = pd.read_excel(file.file, engine='openpyxl')
         #columns = list(df.columns)
-
-    
-
 
     
 
