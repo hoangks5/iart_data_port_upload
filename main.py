@@ -311,7 +311,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), plat
     INSERT IGNORE INTO amz_report (account, order_id, sku)
     VALUES (%s, %s, %s)
     """
-            data = df.values.tolist()
+            data = df_1.values.tolist()
             cursor.executemany(insert_query, data)
             conn.commit()
             cursor.close()
