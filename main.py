@@ -34,6 +34,13 @@ def extract_emails(string):
     for email in emails:
         # Tách phần tên đăng nhập (login) và tên miền
         login, domain = email.split('@')
+        # phàn login chứa đầu - thì xóa
+        if login[0] == '-':
+            login = login[1:]
+        # phần domain chứa cuối xóa đuôi .csv hoặc .xlsx
+        domain_ = domain.split('.')
+        domain_ = domain_[:-1]
+        domain = '.'.join(domain_)
         # Ghép lại với @ và thêm vào danh sách
         result.append(login + '@' + domain)
     
