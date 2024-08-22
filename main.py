@@ -4,9 +4,6 @@ import os
 import pandas as pd
 from s3 import s3_client
 import time
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 from src.check_data_type import check_data_type
 import re
 import mysql.connector
@@ -57,25 +54,10 @@ REGIONS = os.listdir('data_sample')
 REGIONS = [region.lower() for region in REGIONS]
 
 
-class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app, max_size):
-        super().__init__(app)
-        self.max_size = max_size
 
-    async def dispatch(self, request: Request, call_next):
-        if request.method == "POST" and request.headers.get("content-type") and "multipart/form-data" in request.headers.get("content-type"):
-            content_length = request.headers.get("content-length")
-            if content_length and int(content_length) > self.max_size:
-                response = JSONResponse(
-                    content={"status": "error", "message": "File upload quá lớn. Chỉ cho phép file nhỏ hơn 25MB"},
-                    status_code=200
-                )
-                return response
-        response = await call_next(request)
-        return response
+    
     
 app = FastAPI(title="API Iart Data", description="API xử lý file báo cáo", version="1.0")
-app.add_middleware(LimitUploadSizeMiddleware, max_size=25 * 1024 * 1024)  # 25MB
 
 
 
@@ -186,7 +168,8 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             df['account type'] = ''
             columns = list(df.columns)
             
-            print(columns)
+        # loại các row có tất cả cô giá trị là NaN
+        df.dropna(how='all', inplace=True)
             
             
         # đếm xem có bao nhiêu phần tử trong columns năm trong schema

@@ -2,13 +2,11 @@ from dateutil import parser
 
 
 
-
 def check_data_type(df, region):
     wrong_data_type = []
     date_time_dict = df.to_dict(orient='list')
     if date_time_dict == {}:
         return []
-    
     if region == 'au':
         for index, date in enumerate(date_time_dict['date/time']):
             try:
@@ -41,7 +39,9 @@ def check_data_type(df, region):
                 parser.parse(date)
             except:
                 wrong_data_type.append({ "column": 'Datum/Uhrzeit', "row": 9 + index, "value": date })
+        
         key_chekc_isnumric = ['Abrechnungsnummer','Umsätze','Produktumsatzsteuer','Gutschrift für Versandkosten','Steuer auf Versandgutschrift','Gutschrift für Geschenkverpackung','Steuer auf Geschenkverpackungsgutschriften','Rabatte aus Werbeaktionen','Steuer auf Aktionsrabatte','Einbehaltene Steuer auf Marketplace','Verkaufsgebühren','Gebühren zu Versand durch Amazon','Andere Transaktionsgebühren','Andere','Gesamt']
+    
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
