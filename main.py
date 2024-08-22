@@ -8,21 +8,36 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from src.check_data_type import check_data_type
-from sqlalchemy import text
+import re
 import mysql.connector
 from dotenv import load_dotenv
 load_dotenv()
 
-from sqlalchemy import create_engine
 
-conn = mysql.connector.connect(
-    host=os.getenv('MYSQL_HOST'),
-    user=os.getenv('MYSQL_USER'),
-    password=os.getenv('MYSQL_PASSWORD'),
-    database=os.getenv('MYSQL_DATABASE')
-)
+def get_conn():
+    try:
+        conn = mysql.connector.connect(
+            host=os.getenv('MYSQL_HOST'),
+            user=os.getenv('MYSQL_USER'),
+            password=os.getenv('MYSQL_PASSWORD'),
+            database=os.getenv('MYSQL_DATABASE')
+        )
+        return conn
+    except Exception as e:
+        return None
 
-
+def extract_emails(string):
+    # Tìm tất cả email trong chuỗi
+    emails = re.findall(r'[\w\.-]+@[\w\.-]+', string)
+    
+    result = []
+    for email in emails:
+        # Tách phần tên đăng nhập (login) và tên miền
+        login, domain = email.split('@')
+        # Ghép lại với @ và thêm vào danh sách
+        result.append(login + '@' + domain)
+    
+    return result
 
 
 
@@ -30,6 +45,7 @@ TYPE_REPORTS = os.listdir("schema")
 TYPE_REPORTS = [report.split(".")[0] for report in TYPE_REPORTS]
 REGIONS = os.listdir('data_sample')
 REGIONS = [region.lower() for region in REGIONS]
+
 
 class LimitUploadSizeMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, max_size):
@@ -113,8 +129,21 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             "status": "error",
             "message": "Không tìm thấy loại báo cáo phù hợp. Vui lòng kiểm tra lại tên file thuộc 1 trong các loại sau: " + ", ".join(TYPE_REPORTS)
             }
-    account_name = file.filename.split("-")[-1].split(".")[:-1]
-    account_name = '.'.join(account_name).strip().lower()
+        
+    account_name = extract_emails(file.filename)
+    if len(account_name) == 0:
+        return {
+            "status": "error",
+            "message": "Không tìm thấy tên tài khoản trong tên file. Vui lòng kiểm tra lại tên file phải có định dạng: <Thị trường>-<loại báo cáo>-<tên tài khoản>"
+        }
+        
+    elif len(account_name) == 1:
+        account_name = account_name[0]
+    else:
+        return {
+            "status": "error",
+            "message": f"Tìm thấy nhiều tên tài khoản trong tên file [ {' '.join(account_name)} ]. Vui lòng kiểm tra lại tên file phải có định dạng: <Thị trường>-<loại báo cáo>-<tên tài khoản>"
+        }
 
     
     
@@ -199,13 +228,22 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         list_sku = df['sku'].tolist()
         
         
+        conn = get_conn()
+        if conn is None:
+            return {
+                "status": "error",
+                "message": "Không thể kết nối với database"
+            }
         cursor = conn.cursor()
+        
             
         query = """
         SELECT account FROM amz_report WHERE order_id IN ({}) AND sku IN ({})
         """.format(','.join(['%s']*len(list_order_id)), ','.join(['%s']*len(list_sku)))
         cursor.execute(query, list_order_id + list_sku)
         result_query = cursor.fetchall()
+    
+    
             
         if result_query:
             account_ = result_query[0][0]
