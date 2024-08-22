@@ -174,101 +174,110 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             file.file.seek(0)
             df = pd.read_csv(file.file, skiprows=7, encoding='utf-8')
             columns = list(df.columns)
+            
+            
+        # đếm xem có bao nhiêu phần tử trong columns năm trong schema
+        wrong_index = []
+        count = 0
+        for col in columns:
+            if col in schema_:
+                count += 1
+            else:
+                wrong_index.append(col)
+        
+        # kiểm tra xem có bao nhiêu cột thiếu
+        missing_index = []
+        for schema in schema_:
+            if schema not in columns:
+                missing_index.append(schema)
+                
+        
+                
+        result["correct_index"] = f"{count}/{len(columns)}"
+        result["wrong_index"] = wrong_index
+        result["missing_index"] = missing_index
+        result["index_file"] = columns
+        result["schema"] = schema_
+        result["wrong_data_type"] = []
+        result["status"] = 'error'
+        
+        
+        # kiểm tra xem status có success hay không
+        if ( result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available'] ) and result['missing_index'] == []:
+            # kiểm tra data type của file
+            result['wrong_data_type'] = check_data_type(df, region.lower().strip())
+            if result['wrong_data_type'] == []:
+                result['status'] = 'success'
+            else:
+                result['status'] = 'error'
+        
+
+
+        if result['status'] == 'success':
+            df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
+            # chuyển sang s3 bucket
+            s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
+            # chỉ lấy cột thứ 4, 5
+            df = df.iloc[:, 3:5]
+            df.columns = ['order_id', 'sku']
+            df['account'] = account_name
+            
+            # đổi thứ tự cột
+            df = df[['account', 'order_id', 'sku']]
+            df.dropna(inplace=True)
+            list_order_id = df['order_id'].tolist()
+            list_sku = df['sku'].tolist()
+            
+            
+            conn = get_conn()
+            if conn is None:
+                return {
+                    "status": "error",
+                    "message": "Không thể kết nối với database"
+                }
+            cursor = conn.cursor()
+            
+                
+            query = """
+            SELECT account FROM amz_report WHERE order_id IN ({}) AND sku IN ({})
+            """.format(','.join(['%s']*len(list_order_id)), ','.join(['%s']*len(list_sku)))
+            cursor.execute(query, list_order_id + list_sku)
+            result_query = cursor.fetchall()
+        
+        
+                
+            if result_query:
+                account_ = result_query[0][0]
+                if account_ != account_name:
+                    return {
+                        "status": "error",
+                        "message": f"Dữ liệu upload bị trùng lặp order id hoặc sku với tài khoản {account_}"
+                    }
+
+            insert_query = """
+    INSERT IGNORE INTO amz_report (account, order_id, sku)
+    VALUES (%s, %s, %s)
+    """
+            data = df.values.tolist()
+            cursor.executemany(insert_query, data)
+            conn.commit()
+            cursor.close()
+            result['message'] = 'Upload file thành công'
+        else:
+            result['status'] = 'error'
+        
+        
+        
+        
+        return result
+            
+            
+            
     else:
         df = pd.read_excel(file.file, engine='openpyxl')
         columns = list(df.columns)
 
-    # đếm xem có bao nhiêu phần tử trong columns năm trong schema
-    wrong_index = []
-    count = 0
-    for col in columns:
-        if col in schema_:
-            count += 1
-        else:
-            wrong_index.append(col)
     
-    # kiểm tra xem có bao nhiêu cột thiếu
-    missing_index = []
-    for schema in schema_:
-        if schema not in columns:
-            missing_index.append(schema)
-            
-    
-            
-    result["correct_index"] = f"{count}/{len(columns)}"
-    result["wrong_index"] = wrong_index
-    result["missing_index"] = missing_index
-    result["index_file"] = columns
-    result["schema"] = schema_
-    result["wrong_data_type"] = []
-    # kiểm tra xem status có success hay không
-    if ( result['wrong_index'] == [] or result['wrong_index'] == ['No Data Available'] ) and result['missing_index'] == []:
-        # kiểm tra data type của file
-        result['wrong_data_type'] = check_data_type(df, region.lower().strip())
-        if result['wrong_data_type'] == []:
-            result['status'] = 'success'
-        else:
-            result['status'] = 'error'
-    
-
-
-    if result['status'] == 'success':
-        df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
-        # chuyển sang s3 bucket
-        s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
-        # chỉ lấy cột thứ 4, 5
-        df = df.iloc[:, 3:5]
-        df.columns = ['order_id', 'sku']
-        df['account'] = account_name
-        
-        # đổi thứ tự cột
-        df = df[['account', 'order_id', 'sku']]
-        df.dropna(inplace=True)
-        list_order_id = df['order_id'].tolist()
-        list_sku = df['sku'].tolist()
-        
-        
-        conn = get_conn()
-        if conn is None:
-            return {
-                "status": "error",
-                "message": "Không thể kết nối với database"
-            }
-        cursor = conn.cursor()
-        
-            
-        query = """
-        SELECT account FROM amz_report WHERE order_id IN ({}) AND sku IN ({})
-        """.format(','.join(['%s']*len(list_order_id)), ','.join(['%s']*len(list_sku)))
-        cursor.execute(query, list_order_id + list_sku)
-        result_query = cursor.fetchall()
-    
-    
-            
-        if result_query:
-            account_ = result_query[0][0]
-            if account_ != account_name:
-                return {
-                    "status": "error",
-                    "message": f"Dữ liệu upload bị trùng lặp order id hoặc sku với tài khoản {account_}"
-                }
-
-        insert_query = """
-INSERT IGNORE INTO amz_report (account, order_id, sku)
-VALUES (%s, %s, %s)
-"""
-        data = df.values.tolist()
-        cursor.executemany(insert_query, data)
-        conn.commit()
-        cursor.close()
-        result['message'] = 'Upload file thành công'
-    else:
-        result['status'] = 'error'
-    
-    
-    
-    
-    return result
 
 
     
