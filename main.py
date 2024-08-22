@@ -265,15 +265,15 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), plat
 
         
         # chỉ lấy cột thứ 4, 5
-        df = df.iloc[:, 3:5]
-        df.columns = ['order_id', 'sku']
-        df['account'] = account_name
+        df_1 = df.iloc[:, 3:5]
+        df_1.columns = ['order_id', 'sku']
+        df_1['account'] = account_name
         
         # đổi thứ tự cột
-        df = df[['account', 'order_id', 'sku']]
-        df.dropna(inplace=True)
-        list_order_id = df['order_id'].tolist()
-        list_sku = df['sku'].tolist()
+        df_1 = df_1[['account', 'order_id', 'sku']]
+        df_1.dropna(inplace=True)
+        list_order_id = df_1['order_id'].tolist()
+        list_sku = df_1['sku'].tolist()
         
         
         conn = get_conn()
