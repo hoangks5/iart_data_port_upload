@@ -57,10 +57,15 @@ def patch_file(url, file_path, file_name):
         "Authorization" : "Bearer " + ACCESS_TOKEN_ONELAKE,
         "x-ms-file-name": file_name,
     }
-    print("creating file in lake")
+    
     # Code to create file in lakehouse
     response = requests.put(token_url, data={}, headers=token_headers)
-    print(response)
+    if response.status_code != 201:
+        return {
+            "status": "error",
+            "message": "Không thể tạo file trên lakehouse",
+            "response": response.text
+        }
     
     
     token_url = url + "?position=0&action=append&flush=true"
@@ -69,15 +74,21 @@ def patch_file(url, file_path, file_name):
         "x-ms-file-name": 'item.csv',
         "content-length" : "0"
     }
-    print("pushing data to file in lake")
+    
 
     #Code to push Data to Lakehouse 
     with open(file_path, 'rb') as file:
         file_contents = file.read()
         response = requests.patch(token_url, data=file_contents, headers=token_headers)
         
-    print(response.text)
-    return response
+    if response.status_code != 202:
+        return {
+            "status": "error",
+            "message": "Không thể ghi dữ liệu vào file trên lakehouse",
+            "response": response.text
+        }
+        
+    return True
 
 
 
@@ -308,8 +319,10 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), plat
         df.to_csv('./archive/' + file.filename, index=False, encoding='utf-8')
       
       
-        patch_file(f"https://onelake.dfs.fabric.microsoft.com/b8fa8dd8-6181-4d0a-a756-1cc3d08f1244/de223b30-d0a3-469c-94d6-cf7137fcae33/Files/iart/{team}/{platform}/{account_name}/{region}/{file.filename}", './archive/' + file.filename, file.filename)
+        status = patch_file(f"https://onelake.dfs.fabric.microsoft.com/b8fa8dd8-6181-4d0a-a756-1cc3d08f1244/de223b30-d0a3-469c-94d6-cf7137fcae33/Files/iart/{team}/{platform}/{account_name}/{region}/{file.filename}", './archive/' + file.filename, file.filename)
         os.remove('./archive/' + file.filename)
+        if status != True:
+            return status
         return result
             
     else:
