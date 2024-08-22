@@ -181,6 +181,11 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
             file.file.seek(0)
             df = pd.read_csv(file.file, skiprows=7, encoding='utf-8')
             columns = list(df.columns)
+        
+        if region.lower().strip() == 'us' and 'account type' not in columns:
+            # thêm cột account type vào dataframe với giá trị trống
+            df['account type'] = ''
+            columns = list(df.columns)
             
             
         # đếm xem có bao nhiêu phần tử trong columns năm trong schema
@@ -197,7 +202,8 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         for schema in schema_:
             if schema not in columns:
                 missing_index.append(schema)
-                
+
+        
         
                 
         result["correct_index"] = f"{count}/{len(columns)}"
