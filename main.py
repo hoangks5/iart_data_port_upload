@@ -323,7 +323,7 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), plat
       
         
         status = patch_file(f"https://onelake.dfs.fabric.microsoft.com/b8fa8dd8-6181-4d0a-a756-1cc3d08f1244/de223b30-d0a3-469c-94d6-cf7137fcae33/Files/iart/{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}", './archive/' + file.filename, f'{time.time()} - {file.filename}')
-        status = True
+        #status = True
         
         os.remove('./archive/' + file.filename)
         if status != True:
