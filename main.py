@@ -277,8 +277,6 @@ async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), plat
         # chuyển sang s3 bucket
         s3_client.upload_file('./archive/' + file.filename, "iart-data", f"{team}/{platform}/{account_name}/{region}/{time.time()} - {file.filename}")
         os.remove('./archive/' + file.filename)
-        if status != True:
-            return status
         return result
             
     else:
