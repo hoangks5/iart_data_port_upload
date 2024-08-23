@@ -68,7 +68,7 @@ def health():
 
 # api endpoint post method to send the file data excel
 @app.post("/uploadfile/")
-async def uploadfile(file: UploadFile = File(...), team: str = Form('AWE'), platform: str = Form('AWZ')):
+async def uploadfile(file: UploadFile = File(...), team: str = Form('awe'), platform: str = Form('amazon')):
     """_summary_
 
     Args:\n
