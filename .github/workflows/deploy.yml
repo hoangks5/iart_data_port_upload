@@ -38,6 +38,10 @@ jobs:
               echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
               echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
               
+              echo "${{ secrets.CRT }}" > server.crt
+              echo "${{ secrets.KEY }}" > server.key
+
+              
               docker compose stop && docker compose rm -f
               docker compose up -d
             
