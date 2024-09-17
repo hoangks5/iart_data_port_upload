@@ -103,7 +103,7 @@ def check_data_type(df, region):
         for key in key_chekc_isnumric:
             for index, value in enumerate(date_time_dict[key]):
                 try:
-                    float(str(value).replace('.','').replace(',','.').replace(' ',''))
+                    float(str(value).replace('.','').replace(',','.').replace(' ',''))
                 except:
                     wrong_data_type.append({ "column": key, "row": 9 + index, "value": value })
     elif region == 'it':
